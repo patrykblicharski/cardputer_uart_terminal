@@ -9,7 +9,7 @@ void extDisplay_Init() {
     extDisplay.setRotation(7);
     extDisplay.fillScreen(TFT_BLACK);
     terminal.setColorDepth(16);
-    terminal.createSprite(TERM_W, TERM_H);
+    terminal.createSprite(TERM_W, TERM_H_FULL);
 }
 
 void extTerm_Init() {
@@ -22,12 +22,20 @@ void extTerm_Init() {
     terminal.setCursor(0, 0);
 }
 
-void extTerm_DrawTopbar(const char* portLbl, uint32_t baud) {
+void extTerm_DrawTopbar(const char* portLbl, uint32_t baud, const char* deviceName) {
     extDisplay.fillRect(0, 0, EXT_W, TOP_H, TFT_DARKGREY);
     extDisplay.setTextSize(1);
-    extDisplay.setTextColor(C_GREEN, TFT_DARKGREY);
-    extDisplay.setCursor(3, 3);
-    extDisplay.print("CARDPUTER UART");
+
+    if (deviceName && deviceName[0]) {
+        extDisplay.setTextColor(C_AMBER, TFT_DARKGREY);
+        extDisplay.setCursor(3, 3);
+        extDisplay.print(deviceName);
+    } else {
+        extDisplay.setTextColor(C_GREEN, TFT_DARKGREY);
+        extDisplay.setCursor(3, 3);
+        extDisplay.print("CARDPUTER UART");
+    }
+
     char buf[28];
     snprintf(buf, sizeof(buf), "%s  %lu", portLbl, (unsigned long)baud);
     int tw = extDisplay.textWidth(buf);

@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "PowerShell(Get-ChildItem -Path \"E:\\\\####_DEV\\\\CardputerADV+ESP32_UARTtool\\\\cardputer_uart_terminal\" -Force -Hidden | Where-Object {$_.Name -eq '.claude'})"
+      "PowerShell(Get-ChildItem -Path \"E:\\\\####_DEV\\\\CardputerADV+ESP32_UARTtool\\\\cardputer_uart_terminal\" -Force -Hidden | Where-Object {$_.Name -eq '.claude'})",
+      "Bash(claude mcp *)",
+      "Bash(dir /b \"E:/####_DEV/CardputerADV+ESP32_UARTtool/cardputer_uart_terminal/src\")",
+      "Bash(dir /b \"E:/####_DEV/CardputerADV+ESP32_UARTtool/cardputer_uart_terminal/device_side\")",
+      "Bash(dir /b \"E:/####_DEV/CardputerADV+ESP32_UARTtool/config_editor\")",
+      "Bash(dir /b \"E:/####_DEV/CardputerADV+ESP32_UARTtool/config_editor/ui\")",
+      "Bash(dir /b \"E:/####_DEV/CardputerADV+ESP32_UARTtool/config_editor/codegen\")"
     ]
   }
 }

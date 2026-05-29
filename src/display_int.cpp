@@ -14,9 +14,15 @@ void intStatus_Draw(const TermStatus& s) {
     // Header bar
     intSprite.fillRect(0, 0, INT_W, 16, TFT_DARKGREY);
     intSprite.setTextSize(1);
-    intSprite.setTextColor(TFT_WHITE, TFT_DARKGREY);
-    intSprite.setCursor(4, 4);
-    intSprite.print("UART TERMINAL");
+    if (s.deviceName && s.deviceName[0]) {
+        intSprite.setTextColor(C_AMBER, TFT_DARKGREY);
+        intSprite.setCursor(4, 4);
+        intSprite.print(s.deviceName);
+    } else {
+        intSprite.setTextColor(TFT_WHITE, TFT_DARKGREY);
+        intSprite.setCursor(4, 4);
+        intSprite.print("UART TERMINAL");
+    }
 
     // Port / baud
     int y = 22;
@@ -26,7 +32,6 @@ void intStatus_Draw(const TermStatus& s) {
 
     // Last RX source / USB state
     y += 12;
-    intSprite.setTextColor(TFT_WHITE, TFT_BLACK);
     intSprite.setCursor(4, y);  intSprite.printf("RX:   %-4s", s.lastRxLabel);
     intSprite.setTextColor(s.usbConnected ? TFT_GREEN : TFT_DARKGREY, TFT_BLACK);
     intSprite.setCursor(80, y); intSprite.printf("USB:  %s", s.usbConnected ? "ON " : "OFF");
@@ -34,7 +39,7 @@ void intStatus_Draw(const TermStatus& s) {
     // Divider
     y += 14; intSprite.drawFastHLine(0, y, INT_W, TFT_DARKGREY); y += 4;
 
-    // Settings — yellow = non-default
+    intSprite.setTextColor(TFT_WHITE, TFT_BLACK);
     intSprite.setTextColor(!s.localEcho  ? TFT_YELLOW : TFT_WHITE, TFT_BLACK);
     intSprite.setCursor(4,  y); intSprite.printf("ECHO: %s", s.localEcho  ? "ON " : "OFF");
     intSprite.setTextColor(!s.sendCrlf   ? TFT_YELLOW : TFT_WHITE, TFT_BLACK);
@@ -49,13 +54,12 @@ void intStatus_Draw(const TermStatus& s) {
     // Divider
     y += 14; intSprite.drawFastHLine(0, y, INT_W, TFT_DARKGREY); y += 4;
 
-    // Hotkey hints
     intSprite.setTextColor(TFT_DARKGREY, TFT_BLACK);
-    intSprite.setCursor(4, y); intSprite.print("FN+1 Port  FN+2 Baud  FN+3 Echo");
+    intSprite.setCursor(4, y); intSprite.print("FN+G Grid  FN+H Maint  CTRL+[=menu");
     y += 10;
-    intSprite.setCursor(4, y); intSprite.print("FN+4 ANSI  FN+5 Clr   FN+6 CRLF");
+    intSprite.setCursor(4, y); intSprite.print("FN+1 Port  FN+2 Baud  FN+5 Clear");
     y += 10;
-    intSprite.setCursor(4, y); intSprite.print("FN+7 Font  CTRL+key=ctrl char");
+    intSprite.setCursor(4, y); intSprite.print("FN+3 Echo  FN+4 ANSI  FN+7 Font");
 
     intSprite.pushSprite(0, 0);
 }

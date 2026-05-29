@@ -13,6 +13,7 @@ struct TermStatus {
     bool        filterAnsi;
     bool        sendCrlf;
     uint8_t     fontScale;
+    const char* deviceName = nullptr;  // null = no device
 };
 
 void intDisplay_Init();
