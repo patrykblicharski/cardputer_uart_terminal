@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem -Path \"E:\\\\####_DEV\\\\CardputerADV+ESP32_UARTtool\\\\cardputer_uart_terminal\" -Force -Hidden | Where-Object {$_.Name -eq '.claude'})"
+    ]
+  }
+}
