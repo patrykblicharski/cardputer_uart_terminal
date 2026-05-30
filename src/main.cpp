@@ -60,9 +60,11 @@ void loop() {
         return;
     }
 
-    if (M5Cardputer.Keyboard.isChange()) {
-        auto& st = M5Cardputer.Keyboard.keysState();
-        if (st.ctrl) {
+    // CTRL+= global shortcut — czytamy keysState() bez isChange() żeby
+    // nie konsumować flagi przed screen-specific _Loop() który też ją czyta
+    {
+        const auto& st = M5Cardputer.Keyboard.keysState();
+        if (st.ctrl && !st.word.empty()) {
             for (auto c : st.word) {
                 if (c == '=') { helpOverlay_Show(g_session.app); return; }
             }
