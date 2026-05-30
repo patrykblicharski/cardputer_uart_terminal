@@ -1,13 +1,18 @@
 #include <M5Cardputer.h>
-#include "display_ext.h"
-#include "display_int.h"
+#include "display/display_ext.h"
+#include "display/display_int.h"
 #include "app_state.h"
-#include "splash.h"
-#include "menu.h"
-#include "device_detect.h"
-#include "select_list.h"
-#include "uart_term.h"
-#include "maint_menu.h"
+#include "screens/splash.h"
+#include "screens/menu.h"
+#include "screens/device_detect.h"
+#include "screens/select_list.h"
+#include "screens/uart_term.h"
+#include "screens/maint_menu.h"
+#include "screens/sensor_view.h"
+#include "screens/sensor_chart.h"
+#include "apps/app_i2c.h"
+#include "apps/app_lora.h"
+#include "screens/help_overlay.h"
 
 // ─── Global session ───────────────────────────────────────────────────────────
 
@@ -26,6 +31,8 @@ void transitionTo(AppState next) {
         case STATE_MAINT_MENU:  maint_Setup();       break;
         case STATE_SENSOR_VIEW: sensorView_Setup();  break;
         case STATE_SENSOR_CHART:sensorChart_Setup(); break;
+        case STATE_APP_I2C:     i2cApp_Setup();      break;
+        case STATE_APP_LORA:    loraApp_Setup();      break;
     }
 }
 
@@ -34,8 +41,7 @@ void transitionTo(AppState next) {
 void setup() {
     Serial.begin(115200);
 
-    auto cfg = M5.config();
-    M5Cardputer.begin(cfg, true);
+    M5Cardputer.begin();
 
     intDisplay_Init();
     delay(100);
@@ -47,6 +53,21 @@ void setup() {
 
 void loop() {
     M5Cardputer.update();
+
+    if (helpOverlay_IsActive()) {
+        helpOverlay_HandleKey();
+        return;
+    }
+
+    if (M5Cardputer.Keyboard.isChange() && M5Cardputer.Keyboard.isPressed()) {
+        auto& st = M5Cardputer.Keyboard.keysState();
+        if (st.ctrl) {
+            for (auto c : st.word) {
+                if (c == '=') { helpOverlay_Show(g_session.app); return; }
+            }
+        }
+    }
+
     switch (g_session.app) {
         case STATE_SPLASH:       splash_Loop();       break;
         case STATE_MENU:         menu_Loop();         break;
@@ -56,5 +77,7 @@ void loop() {
         case STATE_MAINT_MENU:   maint_Loop();        break;
         case STATE_SENSOR_VIEW:  sensorView_Loop();   break;
         case STATE_SENSOR_CHART: sensorChart_Loop();  break;
+        case STATE_APP_I2C:      i2cApp_Loop();       break;
+        case STATE_APP_LORA:     loraApp_Loop();      break;
     }
 }

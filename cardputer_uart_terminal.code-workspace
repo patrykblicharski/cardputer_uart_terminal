@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"name": "cardputer_uart_terminal",
+			"path": "."
+		},
+		{
+			"name": "heltec_lora_node",
+			"path": "../heltec_lora_node"
+		},
+		{
+			"name": "esp32_sensor_node",
+			"path": "../esp32_sensor_node"
+		}
+	],
+	"settings": {}
+}
