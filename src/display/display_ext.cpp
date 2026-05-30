@@ -12,8 +12,20 @@ void extDisplay_Init() {
     terminal.createSprite(TERM_W, TERM_H_FULL);
 }
 
+void extDraw_SimpleTopbar(const char* title) {
+    extDisplay.fillRect(0, 0, EXT_W, TOP_H, TFT_DARKGREY);
+    extDisplay.setTextSize(1);
+    extDisplay.setTextColor(C_GREEN, TFT_DARKGREY);
+    extDisplay.setCursor(3, 3);
+    extDisplay.print(title);
+}
+
 void extTerm_Init() {
     extDisplay.fillScreen(TFT_BLACK);
+    // Recreate sprite at full height (in case LoRa or another app resized it)
+    terminal.deleteSprite();
+    terminal.setColorDepth(16);
+    terminal.createSprite(TERM_W, TERM_H_FULL);
     terminal.fillScreen(TFT_BLACK);
     terminal.setTextColor(C_GREEN, TFT_BLACK);
     terminal.setTextScroll(true);

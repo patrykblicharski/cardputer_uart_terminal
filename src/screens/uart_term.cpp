@@ -1,7 +1,7 @@
 #include "uart_term.h"
 #include "app_state.h"
-#include "display_ext.h"
-#include "display_int.h"
+#include "display/display_ext.h"
+#include "display/display_int.h"
 #include "cmd_grid.h"
 #include "maint_menu.h"
 #include "config.h"
@@ -37,7 +37,6 @@ static String input_buf;
 static bool   usb_connected = false;
 static bool   int_dirty     = true;
 
-// Height of terminal sprite (changes when cmd grid toggled)
 static int term_h = TERM_H_FULL;
 
 // ─── Serial setup ─────────────────────────────────────────────────────────────
@@ -116,7 +115,7 @@ static void drawChrome() {
     extDisplay.drawFastHLine(0, TOP_H, EXT_W, TFT_DARKGREY);
 }
 
-// ─── Sprite resize on grid toggle ────────────────────────────────────────────
+// ─── Sprite resize on grid toggle ─────────────────────────────────────────────
 
 static void applyGridVisibility() {
     int new_h = g_session.cmdGridVisible ? TERM_H_GRID : TERM_H_FULL;
@@ -130,7 +129,6 @@ static void applyGridVisibility() {
     terminal.setTextSize(font_scale);
     terminal.setCursor(0, 0);
     terminal.println("[grid toggled]");
-    // Clear area between old and new boundary
     if (!g_session.cmdGridVisible) {
         extDisplay.fillRect(0, CMD_GRID_Y, EXT_W, CMD_GRID_H, TFT_BLACK);
     }
@@ -189,7 +187,7 @@ static void handleFn(char key) {
 }
 
 // ─── CTRL+key dynamic command mapping ────────────────────────────────────────
-// CTRL+A,S,D,F,G,H,J,K,L → cmds[0..8]
+
 static const char DYN_KEYS[] = "ASDFGHJKL";
 
 static bool sendDynamicCmd(char upper) {
@@ -212,25 +210,18 @@ static bool sendDynamicCmd(char upper) {
 // ─── Keyboard handler ─────────────────────────────────────────────────────────
 
 static void handleKeyboard() {
-    if (!M5Cardputer.Keyboard.isChange() || !M5Cardputer.Keyboard.isPressed()) return;
+    if (!M5Cardputer.Keyboard.isChange()) return;
     auto& st = M5Cardputer.Keyboard.keysState();
 
+    if (st.fn && st.del) { transitionTo(STATE_MENU); return; }
     if (st.fn) {
         for (auto c : st.word) handleFn(c);
         return;
     }
-
     if (st.ctrl) {
         for (auto c : st.word) {
             char u = (c >= 'a' && c <= 'z') ? (char)(c - 32) : c;
-            if (u == '[') {
-                // CTRL+[ = go back to menu
-                transitionTo(STATE_MENU);
-                return;
-            }
-            // Try dynamic command first
             if (!sendDynamicCmd(u)) {
-                // Fall back to raw control character
                 if (u >= 'A' && u <= 'Z') sendByte(u - 'A' + 1);
                 else sendByte((uint8_t)c);
             }
@@ -246,12 +237,10 @@ static void handleKeyboard() {
             if (local_echo) termWrite('\b');
         }
     }
-
     for (auto c : st.word) {
         input_buf += c;
         if (local_echo) termWrite(c);
     }
-
     if (st.enter) {
         if (input_buf.length() > 0) {
             sendText(input_buf.c_str());
@@ -286,10 +275,7 @@ static void processLine(const String& line) {
         if (g_session.cmdGridVisible) cmdGrid_Draw();
         return;
     }
-    if (maint_ParseSensors(line)) {
-        return; // consumed by sensor view/chart loops
-    }
-    // Otherwise display as regular terminal output (already printed char by char)
+    maint_ParseSensors(line); // store latest sensors even while in terminal
 }
 
 static void readSerial() {
@@ -317,7 +303,6 @@ static void readSerial() {
 // ─── Public API ───────────────────────────────────────────────────────────────
 
 void uartTerm_Setup() {
-    // Reset terminal sprite to full height
     term_h = TERM_H_FULL;
     if (!terminal.width()) {
         terminal.setColorDepth(16);
@@ -343,7 +328,6 @@ void uartTerm_Setup() {
             terminal.println("Cmds loaded. FN+G=grid  FN+H=maint");
         } else {
             terminal.println("FN+G=cmdgrid  FN+H=maintenance");
-            // Request commands
             Serial1.print("?CMD\r\n");
         }
     } else {
@@ -351,7 +335,7 @@ void uartTerm_Setup() {
         terminal.println("FN+1 Port  FN+2 Baud  FN+3 Echo");
         terminal.println("FN+4 ANSI  FN+5 Clear FN+6 CRLF");
         terminal.println("FN+7 Font  FN+G Grid  FN+H Maint");
-        terminal.println("CTRL+[ = menu");
+        terminal.println("FN+DEL = menu");
     }
     terminal.println();
 
@@ -362,9 +346,10 @@ void uartTerm_Setup() {
 }
 
 void uartTerm_Loop() {
+    if (g_session.forceRedraw) { drawChrome(); pushDisplay(); int_dirty = true; g_session.forceRedraw = false; }
     updateUsb();
     handleKeyboard();
-    if (g_session.app != STATE_TERMINAL) return; // may have transitioned
+    if (g_session.app != STATE_TERMINAL) return;
     readSerial();
     if (int_dirty) pushStatus();
 }

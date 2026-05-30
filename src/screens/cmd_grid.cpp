@@ -1,13 +1,11 @@
 #include "cmd_grid.h"
 #include "app_state.h"
-#include "display_ext.h"
+#include "display/display_ext.h"
 #include "config.h"
 
-// CTRL keys in order: A S D F G H J K L
 static const char CMD_KEYS[] = "ASDFGHJKL";
 
 bool cmdGrid_ParseResponse(const String& line) {
-    // Expects: "!CMD:func1,func2,...!"
     if (!line.startsWith("!CMD:") || !line.endsWith("!")) return false;
     String payload = line.substring(5, line.length() - 1);
 
@@ -28,7 +26,6 @@ bool cmdGrid_ParseResponse(const String& line) {
 }
 
 void cmdGrid_Draw() {
-    // 2 rows x 5 cols, each cell ~64px wide, 17px tall
     constexpr int COLS = 5;
     constexpr int ROWS = 2;
     int cellW = EXT_W / COLS;
@@ -36,8 +33,8 @@ void cmdGrid_Draw() {
 
     extDisplay.fillRect(0, CMD_GRID_Y, EXT_W, CMD_GRID_H, TFT_DARKGREY);
     extDisplay.drawFastHLine(0, CMD_GRID_Y, EXT_W, TFT_BLACK);
-
     extDisplay.setTextSize(1);
+
     for (int i = 0; i < g_session.dynamicCmdCount && i < COLS * ROWS; i++) {
         int col = i % COLS;
         int row = i / COLS;

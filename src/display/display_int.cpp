@@ -8,6 +8,15 @@ void intDisplay_Init() {
     intSprite.setTextSize(1);
 }
 
+void intDisplay_ShowLabel(const char* label) {
+    intSprite.fillScreen(TFT_BLACK);
+    intSprite.setTextColor(C_GREEN, TFT_BLACK);
+    intSprite.setTextSize(1);
+    intSprite.setCursor(4, 4);
+    intSprite.print(label);
+    intSprite.pushSprite(0, 0);
+}
+
 void intStatus_Draw(const TermStatus& s) {
     intSprite.fillScreen(TFT_BLACK);
 
@@ -39,7 +48,6 @@ void intStatus_Draw(const TermStatus& s) {
     // Divider
     y += 14; intSprite.drawFastHLine(0, y, INT_W, TFT_DARKGREY); y += 4;
 
-    intSprite.setTextColor(TFT_WHITE, TFT_BLACK);
     intSprite.setTextColor(!s.localEcho  ? TFT_YELLOW : TFT_WHITE, TFT_BLACK);
     intSprite.setCursor(4,  y); intSprite.printf("ECHO: %s", s.localEcho  ? "ON " : "OFF");
     intSprite.setTextColor(!s.sendCrlf   ? TFT_YELLOW : TFT_WHITE, TFT_BLACK);
@@ -55,7 +63,7 @@ void intStatus_Draw(const TermStatus& s) {
     y += 14; intSprite.drawFastHLine(0, y, INT_W, TFT_DARKGREY); y += 4;
 
     intSprite.setTextColor(TFT_DARKGREY, TFT_BLACK);
-    intSprite.setCursor(4, y); intSprite.print("FN+G Grid  FN+H Maint  CTRL+[=menu");
+    intSprite.setCursor(4, y); intSprite.print("FN+G Grid  FN+H Maint  FN+DEL=menu");
     y += 10;
     intSprite.setCursor(4, y); intSprite.print("FN+1 Port  FN+2 Baud  FN+5 Clear");
     y += 10;

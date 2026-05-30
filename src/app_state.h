@@ -1,5 +1,5 @@
 #pragma once
-#include "device_config.h"
+#include "device/device_config.h"
 #include "config.h"
 
 enum AppState {
@@ -10,7 +10,9 @@ enum AppState {
     STATE_TERMINAL,
     STATE_MAINT_MENU,
     STATE_SENSOR_VIEW,
-    STATE_SENSOR_CHART
+    STATE_SENSOR_CHART,
+    STATE_APP_I2C,
+    STATE_APP_LORA
 };
 
 struct SensorSample {
@@ -25,7 +27,7 @@ struct SessionState {
     DeviceConfig config;
     bool         configLoaded     = false;
     bool         deviceIdentified = false;
-    // Dynamic commands from ?CMD response, mapped CTRL+A,S,D,F,G,H,J,K,L
+    bool         forceRedraw      = false;
     String       dynamicCmds[9];
     int          dynamicCmdCount  = 0;
     bool         cmdGridVisible   = false;
@@ -41,6 +43,7 @@ struct SessionState {
     void reset() {
         configLoaded     = false;
         deviceIdentified = false;
+        forceRedraw      = false;
         dynamicCmdCount  = 0;
         cmdGridVisible   = false;
         chartRunning     = false;

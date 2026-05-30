@@ -1,17 +1,17 @@
 #include "device_detect.h"
 #include "app_state.h"
-#include "device_config.h"
-#include "display_ext.h"
-#include "display_int.h"
+#include "device/device_config.h"
+#include "display/display_ext.h"
+#include "display/display_int.h"
 #include "config.h"
 #include <M5Cardputer.h>
 
-static constexpr int    MAX_ATTEMPTS  = 5;
+static constexpr int    MAX_ATTEMPTS    = 5;
 static constexpr unsigned long HELLO_INTERVAL = 1000;
 
 static int           s_attempt   = 0;
 static unsigned long s_lastHello = 0;
-static bool          s_waitIdent = false; // received "HELLO SIR", expecting ident line
+static bool          s_waitIdent = false;
 static String        s_rxBuf;
 static bool          s_done      = false;
 static bool          s_found     = false;
@@ -24,7 +24,6 @@ static void drawStatus(const char* line1, const char* line2 = nullptr) {
     extDisplay.setCursor(3, 60);
     extDisplay.print("Wykrywanie hosta...");
 
-    // Progress dots
     extDisplay.setCursor(3, 80);
     extDisplay.setTextColor(C_AMBER, TFT_BLACK);
     char pbuf[32];
@@ -39,18 +38,33 @@ static void drawStatus(const char* line1, const char* line2 = nullptr) {
         extDisplay.print(line2);
     }
 
-    extDisplay.setTextSize(1);
     extDisplay.setTextColor(TFT_DARKGREY, TFT_BLACK);
     extDisplay.setCursor(3, INPUT_Y + 2);
-    extDisplay.print("CTRL+[ = wstecz   ENTER = kontynuuj");
+    extDisplay.print("FN+DEL=wstecz   ENTER=kontynuuj");
 }
 
-static void drawTopbar() {
-    extDisplay.fillRect(0, 0, EXT_W, TOP_H, TFT_DARKGREY);
-    extDisplay.setTextSize(1);
-    extDisplay.setTextColor(C_GREEN, TFT_DARKGREY);
-    extDisplay.setCursor(3, 3);
-    extDisplay.print("WYKRYWANIE HOSTA");
+static void processIdent(const String& line) {
+    DeviceIdentity ident;
+    if (!deviceConfig_ParseIdentity(line, ident)) {
+        drawStatus("Nieprawidlowa odpowiedz", line.c_str());
+        s_done = true; s_found = false;
+        return;
+    }
+    g_session.deviceIdentified = true;
+    String err;
+    if (deviceConfig_LoadByUid(ident.uid, g_session.config, err)) {
+        g_session.configLoaded = true;
+    } else {
+        g_session.config = DeviceConfig{};
+        g_session.config.deviceName = ident.deviceName;
+        g_session.config.uid        = ident.uid;
+        g_session.config.typeId     = ident.typeId;
+        g_session.config.maintType  = ident.maintType;
+        g_session.configLoaded      = false;
+    }
+    drawStatus(("Znaleziono: " + ident.deviceName).c_str(),
+               ("UID: " + ident.uid).c_str());
+    s_done = true; s_found = true;
 }
 
 void detect_Setup() {
@@ -65,60 +79,26 @@ void detect_Setup() {
                   SERIAL_8N1, UART_RX_PIN, UART_TX_PIN);
 
     extDisplay.fillScreen(TFT_BLACK);
-    drawTopbar();
+    extDraw_SimpleTopbar("WYKRYWANIE HOSTA");
     drawStatus("Wysylanie HELLO...");
-
-    intSprite.fillScreen(TFT_BLACK);
-    intSprite.setTextColor(C_GREEN, TFT_BLACK);
-    intSprite.setTextSize(1);
-    intSprite.setCursor(4, 4);
-    intSprite.print("WYKRYWANIE HOSTA");
-    intSprite.pushSprite(0, 0);
-}
-
-static void processIdent(const String& line) {
-    DeviceIdentity ident;
-    if (!deviceConfig_ParseIdentity(line, ident)) {
-        drawStatus("Nieprawidlowa odpowiedz", line.c_str());
-        s_done = true; s_found = false;
-        return;
-    }
-    g_session.deviceIdentified = true;
-    // Try to load config from SD
-    String err;
-    if (deviceConfig_LoadByUid(ident.uid, g_session.config, err)) {
-        g_session.configLoaded = true;
-    } else {
-        // Build minimal config from ident
-        g_session.config = DeviceConfig{};
-        g_session.config.deviceName = ident.deviceName;
-        g_session.config.uid        = ident.uid;
-        g_session.config.typeId     = ident.typeId;
-        g_session.config.maintType  = ident.maintType;
-        g_session.configLoaded      = false;
-    }
-    drawStatus(("Znaleziono: " + ident.deviceName).c_str(),
-               ("UID: " + ident.uid).c_str());
-    s_done = true; s_found = true;
+    intDisplay_ShowLabel("WYKRYWANIE HOSTA");
 }
 
 void detect_Loop() {
-    if (!M5Cardputer.Keyboard.isChange() || !M5Cardputer.Keyboard.isPressed()) goto read_serial;
-    {
+    if (g_session.forceRedraw) {
+        extDisplay.fillScreen(TFT_BLACK);
+        extDraw_SimpleTopbar("WYKRYWANIE HOSTA");
+        g_session.forceRedraw = false;
+    }
+    if (M5Cardputer.Keyboard.isChange()) {
         auto& st = M5Cardputer.Keyboard.keysState();
-        if (st.ctrl) {
-            for (auto c : st.word) {
-                if (c == '[') { transitionTo(STATE_MENU); return; }
-            }
-        }
+        if (st.fn && st.del) { transitionTo(STATE_MENU); return; }
         if (st.enter && s_done) {
             transitionTo(STATE_TERMINAL);
             return;
         }
     }
 
-read_serial:
-    // Drain Serial1 into line buffer
     while (Serial1.available()) {
         char c = Serial1.read();
         if (c == '\n') {

@@ -68,9 +68,9 @@ bool deviceConfig_LoadAtIndex(size_t index, DeviceConfig& out, String& error) {
 
     for (JsonObject s : doc["sensors"].as<JsonArray>()) {
         SensorConfig sc;
-        sc.name        = (const char*)s["name"] ? String((const char*)s["name"]) : String();
-        sc.unit        = (const char*)s["unit"] ? String((const char*)s["unit"]) : String();
-        sc.type        = (const char*)s["type"] ? String((const char*)s["type"]) : String("analog");
+        sc.name        = (const char*)s["name"]        ? String((const char*)s["name"])        : String();
+        sc.unit        = (const char*)s["unit"]        ? String((const char*)s["unit"])        : String();
+        sc.type        = (const char*)s["type"]        ? String((const char*)s["type"])        : String("analog");
         sc.pin         = s["pin"] | -1;
         sc.maintenance = s["maintenance"] | false;
         out.sensors.push_back(sc);
@@ -103,7 +103,7 @@ String deviceConfig_PathAt(size_t i) {
 }
 
 bool deviceConfig_ParseIdentity(const String& line, DeviceIdentity& out) {
-    // "DeviceName;UID;TypeID;maintType\r\n"
+    // "DeviceName;UID;TypeID;maintType"
     int p1 = line.indexOf(';');
     if (p1 < 0) return false;
     int p2 = line.indexOf(';', p1 + 1);

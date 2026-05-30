@@ -17,4 +17,5 @@ struct TermStatus {
 };
 
 void intDisplay_Init();
+void intDisplay_ShowLabel(const char* label);  // single-line title on black bg
 void intStatus_Draw(const TermStatus& s);

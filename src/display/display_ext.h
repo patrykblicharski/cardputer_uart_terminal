@@ -8,6 +8,9 @@ extern M5Canvas      terminal;
 
 void extDisplay_Init();
 
+// Simple dark-grey topbar with green title — used by menu screens
+void extDraw_SimpleTopbar(const char* title);
+
 // Called once when entering terminal state; clears display and sprite
 void extTerm_Init();
 

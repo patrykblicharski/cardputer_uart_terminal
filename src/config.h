@@ -23,10 +23,16 @@ static constexpr int TERM_H_GRID = CMD_GRID_Y - TERM_Y;    // 178
 static constexpr int INT_W = 240, INT_H = 135;
 
 // RGB565 palette
+static constexpr uint16_t C_BG     = 0x0020u;
 static constexpr uint16_t C_GREEN  = 0x07E8u;
 static constexpr uint16_t C_DIM    = 0x0364u;
+static constexpr uint16_t C_BORDER = 0x0122u;
 static constexpr uint16_t C_AMBER  = 0xFC00u;
+static constexpr uint16_t C_RED    = 0xF800u;
+static constexpr uint16_t C_BLUE   = 0x07FFu;
 static constexpr uint16_t C_GRAY   = 0x39E7u;
+static constexpr uint16_t C_WHITE  = 0xFFFFu;
+static constexpr uint16_t C_BLACK  = 0x0000u;
 
 // Chart colours (4 sensors)
 static constexpr uint16_t C_CHART[4] = { 0x07E8u, 0xFC00u, 0x001Fu, 0xF800u };

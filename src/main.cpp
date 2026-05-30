@@ -41,7 +41,8 @@ void transitionTo(AppState next) {
 void setup() {
     Serial.begin(115200);
 
-    M5Cardputer.begin();
+    auto cfg = M5.config();
+    M5Cardputer.begin(cfg, true);
 
     intDisplay_Init();
     delay(100);
@@ -59,7 +60,7 @@ void loop() {
         return;
     }
 
-    if (M5Cardputer.Keyboard.isChange() && M5Cardputer.Keyboard.isPressed()) {
+    if (M5Cardputer.Keyboard.isChange()) {
         auto& st = M5Cardputer.Keyboard.keysState();
         if (st.ctrl) {
             for (auto c : st.word) {

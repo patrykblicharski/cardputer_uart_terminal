@@ -1,8 +1,8 @@
 #include "select_list.h"
 #include "app_state.h"
-#include "device_config.h"
-#include "display_ext.h"
-#include "display_int.h"
+#include "device/device_config.h"
+#include "display/display_ext.h"
+#include "display/display_int.h"
 #include "config.h"
 #include <M5Cardputer.h>
 
@@ -14,11 +14,7 @@ static String s_error;
 
 static void drawList() {
     extDisplay.fillScreen(TFT_BLACK);
-    extDisplay.fillRect(0, 0, EXT_W, TOP_H, TFT_DARKGREY);
-    extDisplay.setTextSize(1);
-    extDisplay.setTextColor(C_GREEN, TFT_DARKGREY);
-    extDisplay.setCursor(3, 3);
-    extDisplay.print("WYBIERZ URZADZENIE");
+    extDraw_SimpleTopbar("WYBIERZ URZADZENIE");
 
     if (!s_sdOk) {
         extDisplay.setTextColor(TFT_RED, TFT_BLACK);
@@ -26,7 +22,7 @@ static void drawList() {
         extDisplay.print("Blad SD: " + s_error);
         extDisplay.setTextColor(TFT_DARKGREY, TFT_BLACK);
         extDisplay.setCursor(3, INPUT_Y + 2);
-        extDisplay.print("CTRL+[ = wstecz");
+        extDisplay.print("FN+DEL = wstecz");
         return;
     }
     if (s_count == 0) {
@@ -35,15 +31,14 @@ static void drawList() {
         extDisplay.print("Brak plikow w /devices/");
         extDisplay.setTextColor(TFT_DARKGREY, TFT_BLACK);
         extDisplay.setCursor(3, INPUT_Y + 2);
-        extDisplay.print("CTRL+[ = wstecz");
+        extDisplay.print("FN+DEL = wstecz");
         return;
     }
 
     int y0 = TOP_H + 8;
     int dy = 20;
     int maxVis = (INPUT_Y - y0) / dy;
-    int offset = 0;
-    if (s_sel >= maxVis) offset = s_sel - maxVis + 1;
+    int offset = (s_sel >= maxVis) ? s_sel - maxVis + 1 : 0;
 
     for (int i = 0; i < s_count && (i - offset) < maxVis; i++) {
         if (i < offset) continue;
@@ -60,7 +55,7 @@ static void drawList() {
 
     extDisplay.setTextColor(TFT_DARKGREY, TFT_BLACK);
     extDisplay.setCursor(3, INPUT_Y + 2);
-    extDisplay.print("j/k=nav  ENTER=select  CTRL+[=wstecz");
+    extDisplay.print("j/k=nav  ENTER=select  FN+DEL=wstecz");
 
     s_dirty = false;
 }
@@ -73,38 +68,22 @@ void selectList_Setup() {
     s_sdOk  = deviceConfig_Begin(s_error);
     s_count = (int)deviceConfig_Count();
 
-    intSprite.fillScreen(TFT_BLACK);
-    intSprite.setTextColor(C_GREEN, TFT_BLACK);
-    intSprite.setTextSize(1);
-    intSprite.setCursor(4, 4);
-    intSprite.print("WYBOR URZADZENIA");
-    intSprite.pushSprite(0, 0);
-
+    intDisplay_ShowLabel("WYBOR URZADZENIA");
     drawList();
 }
 
 void selectList_Loop() {
-    if (s_dirty) drawList();
+    if (s_dirty || g_session.forceRedraw) { s_dirty = false; g_session.forceRedraw = false; drawList(); }
 
-    if (!M5Cardputer.Keyboard.isChange() || !M5Cardputer.Keyboard.isPressed()) return;
+    if (!M5Cardputer.Keyboard.isChange()) return;
     auto& st = M5Cardputer.Keyboard.keysState();
 
-    if (st.ctrl) {
-        for (auto c : st.word) {
-            if (c == '[') { transitionTo(STATE_MENU); return; }
-        }
-        return;
-    }
+    if (st.fn && st.del) { transitionTo(STATE_MENU); return; }
     if (st.fn) return;
 
     for (auto c : st.word) {
-        if (c == 'j' || c == 'J') {
-            if (s_count > 0) s_sel = (s_sel + 1) % s_count;
-            s_dirty = true;
-        } else if (c == 'k' || c == 'K') {
-            if (s_count > 0) s_sel = (s_sel - 1 + s_count) % s_count;
-            s_dirty = true;
-        }
+        if      (c == 'j' || c == 'J') { if (s_count > 0) s_sel = (s_sel + 1) % s_count; s_dirty = true; }
+        else if (c == 'k' || c == 'K') { if (s_count > 0) s_sel = (s_sel - 1 + s_count) % s_count; s_dirty = true; }
     }
     if (st.enter && s_sdOk && s_count > 0) {
         String err;

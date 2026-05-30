@@ -1,7 +1,7 @@
 #include "splash.h"
 #include "app_state.h"
-#include "display_ext.h"
-#include "display_int.h"
+#include "display/display_ext.h"
+#include "display/display_int.h"
 #include "config.h"
 
 static constexpr unsigned long SPLASH_MS = 2000;
@@ -25,12 +25,7 @@ void splash_Setup() {
     extDisplay.setCursor((EXT_W - tw) / 2, EXT_H / 2 + 10);
     extDisplay.print(sub);
 
-    intSprite.fillScreen(TFT_BLACK);
-    intSprite.setTextColor(C_GREEN, TFT_BLACK);
-    intSprite.setTextSize(1);
-    intSprite.setCursor(4, 4);
-    intSprite.print("CARDPUTER UART TOOL v2");
-    intSprite.pushSprite(0, 0);
+    intDisplay_ShowLabel("CARDPUTER UART TOOL v2");
 }
 
 void splash_Loop() {
@@ -39,7 +34,6 @@ void splash_Loop() {
         transitionTo(STATE_MENU);
         return;
     }
-    // Animate progress bar
     int barX = 40, barY = EXT_H / 2 + 30;
     int barW = EXT_W - 80, barH = 8;
     int fill = (int)(barW * elapsed / SPLASH_MS);
