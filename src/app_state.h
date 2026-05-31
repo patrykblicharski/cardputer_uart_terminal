@@ -5,6 +5,7 @@
 enum AppState {
     STATE_SPLASH = 0,
     STATE_MENU,
+    STATE_UART_MODE,
     STATE_DETECT,
     STATE_SELECT_LIST,
     STATE_TERMINAL,

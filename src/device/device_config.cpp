@@ -4,6 +4,9 @@
 #include <SPI.h>
 #include <ArduinoJson.h>
 
+// HSPI (SPI3) — SPI2 jest zajety przez LGFX/ILI9341
+static SPIClass s_sdSpi(HSPI);
+
 static constexpr size_t MAX_ENTRIES = 24;
 
 static struct {
@@ -14,8 +17,8 @@ static struct {
 static size_t s_count = 0;
 
 bool deviceConfig_Begin(String& error) {
-    SPI.begin(SD_SCK_PIN, SD_MISO_PIN, SD_MOSI_PIN, SD_CS_PIN);
-    if (!SD.begin(SD_CS_PIN)) {
+    s_sdSpi.begin(SD_SCK_PIN, SD_MISO_PIN, SD_MOSI_PIN);
+    if (!SD.begin(SD_CS_PIN, s_sdSpi, 4000000)) {
         error = "SD mount failed";
         return false;
     }

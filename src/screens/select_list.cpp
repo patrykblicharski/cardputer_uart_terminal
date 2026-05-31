@@ -55,7 +55,7 @@ static void drawList() {
 
     extDisplay.setTextColor(TFT_DARKGREY, TFT_BLACK);
     extDisplay.setCursor(3, INPUT_Y + 2);
-    extDisplay.print("j/k=nav  ENTER=select  FN+DEL=wstecz");
+    extDisplay.print(";/.=nav  ENTER=wybierz  FN+DEL=wstecz");
 
     s_dirty = false;
 }
@@ -78,12 +78,12 @@ void selectList_Loop() {
     if (!M5Cardputer.Keyboard.isChange()) return;
     auto& st = M5Cardputer.Keyboard.keysState();
 
-    if (st.fn && st.del) { transitionTo(STATE_MENU); return; }
+    if (st.fn && st.del) { transitionTo(STATE_UART_MODE); return; }
     if (st.fn) return;
 
     for (auto c : st.word) {
-        if      (c == 'j' || c == 'J') { if (s_count > 0) s_sel = (s_sel + 1) % s_count; s_dirty = true; }
-        else if (c == 'k' || c == 'K') { if (s_count > 0) s_sel = (s_sel - 1 + s_count) % s_count; s_dirty = true; }
+        if      (c == '.' || c == 'j' || c == 'J') { if (s_count > 0) s_sel = (s_sel + 1) % s_count; s_dirty = true; }
+        else if (c == ';' || c == 'k' || c == 'K') { if (s_count > 0) s_sel = (s_sel - 1 + s_count) % s_count; s_dirty = true; }
     }
     if (st.enter && s_sdOk && s_count > 0) {
         String err;

@@ -7,7 +7,10 @@
       "Bash(dir /b \"E:/####_DEV/CardputerADV+ESP32_UARTtool/cardputer_uart_terminal/device_side\")",
       "Bash(dir /b \"E:/####_DEV/CardputerADV+ESP32_UARTtool/config_editor\")",
       "Bash(dir /b \"E:/####_DEV/CardputerADV+ESP32_UARTtool/config_editor/ui\")",
-      "Bash(dir /b \"E:/####_DEV/CardputerADV+ESP32_UARTtool/config_editor/codegen\")"
+      "Bash(dir /b \"E:/####_DEV/CardputerADV+ESP32_UARTtool/config_editor/codegen\")",
+      "mcp__filesystem__directory_tree",
+      "Bash(Get-ChildItem src/apps/, src/device/, src/display/, src/screens/ -Recurse)",
+      "Bash(Select-Object Name)"
     ]
   }
 }

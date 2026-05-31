@@ -89,9 +89,9 @@ static void drawOverlay() {
         extDisplay.print(MAINT_ITEMS[i]);
     }
 
-    extDisplay.setTextColor(TFT_DARKGREY, TFT_DARKGREY);
+    extDisplay.setTextColor(C_GRAY, TFT_DARKGREY);
     extDisplay.setCursor(4, EXT_H - 20);
-    extDisplay.print("FN+DEL=zamknij");
+    extDisplay.print(";/.=nav  ENTER=ok  FN+DEL=wyjdz");
 
     s_mDirty = false;
 }
@@ -109,17 +109,21 @@ void maint_Loop() {
     auto& st = M5Cardputer.Keyboard.keysState();
 
     if (st.fn && st.del) { transitionTo(STATE_TERMINAL); return; }
-    if (st.fn) {
-        for (auto c : st.word) {
-            if (c == '4') { s_mSel = (s_mSel - 1 + MAINT_ITEM_COUNT) % MAINT_ITEM_COUNT; s_mDirty = true; }
-            if (c == '6') { s_mSel = (s_mSel + 1) % MAINT_ITEM_COUNT;                    s_mDirty = true; }
-        }
-        return;
-    }
+    if (st.fn) return;
+
+    bool moved = false;
     for (auto c : st.word) {
-        if (c == 'j' || c == 'J') { s_mSel = (s_mSel + 1) % MAINT_ITEM_COUNT;              s_mDirty = true; }
-        if (c == 'k' || c == 'K') { s_mSel = (s_mSel - 1 + MAINT_ITEM_COUNT) % MAINT_ITEM_COUNT; s_mDirty = true; }
+        if (c == ';' || c == 'k' || c == 'K') {
+            s_mSel = (s_mSel - 1 + MAINT_ITEM_COUNT) % MAINT_ITEM_COUNT;
+            moved = true;
+        }
+        if (c == '.' || c == 'j' || c == 'J') {
+            s_mSel = (s_mSel + 1) % MAINT_ITEM_COUNT;
+            moved = true;
+        }
     }
+    if (moved) { drawOverlay(); return; }
+
     if (st.enter) {
         switch (s_mSel) {
             case 0: transitionTo(STATE_SENSOR_VIEW);  break;

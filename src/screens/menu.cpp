@@ -105,9 +105,9 @@ void menu_Loop() {
 
     if (st.enter && kMenuItems[s_sel].available) {
         switch (s_sel) {
-            case 0: transitionTo(STATE_DETECT);   break;
-            case 1: transitionTo(STATE_APP_I2C);  break;
-            case 2: transitionTo(STATE_APP_LORA); break;
+            case 0: transitionTo(STATE_UART_MODE); break;
+            case 1: transitionTo(STATE_APP_I2C);   break;
+            case 2: transitionTo(STATE_APP_LORA);  break;
         }
     }
 }

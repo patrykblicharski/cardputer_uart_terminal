@@ -92,7 +92,7 @@ void detect_Loop() {
     }
     if (M5Cardputer.Keyboard.isChange()) {
         auto& st = M5Cardputer.Keyboard.keysState();
-        if (st.fn && st.del) { transitionTo(STATE_MENU); return; }
+        if (st.fn && st.del) { transitionTo(STATE_UART_MODE); return; }
         if (st.enter && s_done) {
             transitionTo(STATE_TERMINAL);
             return;

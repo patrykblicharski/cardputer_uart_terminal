@@ -4,6 +4,7 @@
 #include "app_state.h"
 #include "screens/splash.h"
 #include "screens/menu.h"
+#include "screens/uart_mode.h"
 #include "screens/device_detect.h"
 #include "screens/select_list.h"
 #include "screens/uart_term.h"
@@ -25,6 +26,7 @@ void transitionTo(AppState next) {
     switch (next) {
         case STATE_SPLASH:      splash_Setup();      break;
         case STATE_MENU:        menu_Setup();        break;
+        case STATE_UART_MODE:   uartMode_Setup();    break;
         case STATE_DETECT:      detect_Setup();      break;
         case STATE_SELECT_LIST: selectList_Setup();  break;
         case STATE_TERMINAL:    uartTerm_Setup();    break;
@@ -74,6 +76,7 @@ void loop() {
     switch (g_session.app) {
         case STATE_SPLASH:       splash_Loop();       break;
         case STATE_MENU:         menu_Loop();         break;
+        case STATE_UART_MODE:    uartMode_Loop();     break;
         case STATE_DETECT:       detect_Loop();       break;
         case STATE_SELECT_LIST:  selectList_Loop();   break;
         case STATE_TERMINAL:     uartTerm_Loop();     break;
