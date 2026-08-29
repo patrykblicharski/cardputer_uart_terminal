@@ -120,13 +120,15 @@ if ($LASTEXITCODE -ne 0) { throw 'git push failed' }
 git push origin $tag
 if ($LASTEXITCODE -ne 0) { throw "git push $tag failed" }
 
-$asset = Join-Path $repo "firmware-$next.bin"
+$assetDir = Join-Path $repo ".pio\release-asset"
+New-Item -ItemType Directory -Force -Path $assetDir | Out-Null
+$asset = Join-Path $assetDir "firmware.bin"
 Copy-Item -Path $firmwareSrc -Destination $asset -Force
 try {
-    gh release create $tag "$asset#firmware.bin" --title $tag --generate-notes
+    gh release create $tag $asset --title $tag --generate-notes
     if ($LASTEXITCODE -ne 0) { throw "gh release create $tag failed" }
 } finally {
-    Remove-Item -Path $asset -ErrorAction SilentlyContinue
+    Remove-Item -Path $assetDir -Recurse -Force -ErrorAction SilentlyContinue
 }
 
 $url = gh release view $tag --json url --jq .url

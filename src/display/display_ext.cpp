@@ -8,8 +8,6 @@ void extDisplay_Init() {
     extDisplay.init();
     extDisplay.setRotation(7);
     extDisplay.fillScreen(TFT_BLACK);
-    terminal.setColorDepth(16);
-    terminal.createSprite(TERM_W, TERM_H_FULL);
 }
 
 void extDraw_SimpleTopbar(const char* title) {

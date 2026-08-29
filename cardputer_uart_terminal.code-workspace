@@ -11,6 +11,10 @@
 		{
 			"name": "esp32_sensor_node",
 			"path": "../esp32_sensor_node"
+		},
+		{
+			"name": "wemos_ble_uart",
+			"path": "wemos_ble_uart"
 		}
 	],
 	"settings": {}

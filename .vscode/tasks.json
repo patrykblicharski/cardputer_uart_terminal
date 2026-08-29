@@ -125,6 +125,52 @@
                 "reveal": "always",
                 "panel": "shared"
             }
+        },
+        {
+            "label": "PIO: Build Wemos BLE UART",
+            "type": "process",
+            "command": "${env:USERPROFILE}\\.platformio\\penv\\Scripts\\pio.exe",
+            "args": ["run", "-d", "wemos_ble_uart", "-e", "wemos-d1-esp32"],
+            "icon": {
+                "id": "radio-tower",
+                "color": "terminal.ansiBlue"
+            },
+            "problemMatcher": ["$gcc"],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "PIO: Upload Wemos BLE UART",
+            "type": "process",
+            "command": "${env:USERPROFILE}\\.platformio\\penv\\Scripts\\pio.exe",
+            "args": ["run", "-d", "wemos_ble_uart", "-e", "wemos-d1-esp32", "-t", "upload"],
+            "icon": {
+                "id": "radio-tower",
+                "color": "terminal.ansiYellow"
+            },
+            "problemMatcher": ["$gcc"],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "PIO: Monitor Wemos BLE UART",
+            "type": "process",
+            "command": "${env:USERPROFILE}\\.platformio\\penv\\Scripts\\pio.exe",
+            "args": ["device", "monitor", "-d", "wemos_ble_uart", "-e", "wemos-d1-esp32"],
+            "icon": {
+                "id": "plug",
+                "color": "terminal.ansiBlue"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "focus": true
+            }
         }
     ]
 }

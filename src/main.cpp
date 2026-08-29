@@ -46,6 +46,9 @@ void setup() {
     Serial.begin(115200);
 
     auto cfg = M5.config();
+    // Do not let M5Unified probe Unit LCD / OLED / HDMI — that fights our
+    // ILI9341 on SPI2 (GPIO 40/14/15/5/13).
+    cfg.external_display_value = 0;
     M5Cardputer.begin(cfg, true);
 
     intDisplay_Init();
