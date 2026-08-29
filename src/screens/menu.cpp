@@ -27,7 +27,7 @@ static void extDraw() {
     extDisplay.print("Select application:");
 
     for (int i = 0; i < kMenuItemCount; i++) {
-        int     iy    = 56 + i * 52;
+        int     iy    = 54 + i * 42;
         bool    iSel  = (i == s_sel);
         bool    avail = kMenuItems[i].available;
 
@@ -36,17 +36,17 @@ static void extDraw() {
         uint16_t fgName = iSel ? C_WHITE  : (avail ? C_GREEN : C_GRAY);
         uint16_t fgDesc = iSel ? C_GREEN  : C_GRAY;
 
-        extDisplay.fillRect(4, iy,      EXT_W - 8, 46, rowBg);
-        extDisplay.drawRect(4, iy,      EXT_W - 8, 46, border);
+        extDisplay.fillRect(4, iy,      EXT_W - 8, 38, rowBg);
+        extDisplay.drawRect(4, iy,      EXT_W - 8, 38, border);
 
         extDisplay.setTextSize(2);
         extDisplay.setTextColor(fgName, rowBg);
-        extDisplay.setCursor(12, iy + 7);
+        extDisplay.setCursor(12, iy + 4);
         extDisplay.print(kMenuItems[i].name);
 
         extDisplay.setTextSize(1);
         extDisplay.setTextColor(fgDesc, rowBg);
-        extDisplay.setCursor(12, iy + 32);
+        extDisplay.setCursor(12, iy + 24);
         extDisplay.print(kMenuItems[i].desc);
     }
 
@@ -105,9 +105,10 @@ void menu_Loop() {
 
     if (st.enter && kMenuItems[s_sel].available) {
         switch (s_sel) {
-            case 0: transitionTo(STATE_UART_MODE); break;
-            case 1: transitionTo(STATE_APP_I2C);   break;
-            case 2: transitionTo(STATE_APP_LORA);  break;
+            case 0: transitionTo(STATE_UART_MODE);    break;
+            case 1: transitionTo(STATE_APP_I2C);      break;
+            case 2: transitionTo(STATE_APP_LORA);     break;
+            case 3: transitionTo(STATE_APP_BLE_UART); break;
         }
     }
 }

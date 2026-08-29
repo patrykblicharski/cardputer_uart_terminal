@@ -13,6 +13,7 @@
 #include "screens/sensor_chart.h"
 #include "apps/app_i2c.h"
 #include "apps/app_lora.h"
+#include "apps/app_ble_uart.h"
 #include "screens/help_overlay.h"
 
 // ─── Global session ───────────────────────────────────────────────────────────
@@ -33,8 +34,9 @@ void transitionTo(AppState next) {
         case STATE_MAINT_MENU:  maint_Setup();       break;
         case STATE_SENSOR_VIEW: sensorView_Setup();  break;
         case STATE_SENSOR_CHART:sensorChart_Setup(); break;
-        case STATE_APP_I2C:     i2cApp_Setup();      break;
-        case STATE_APP_LORA:    loraApp_Setup();      break;
+        case STATE_APP_I2C:      i2cApp_Setup();      break;
+        case STATE_APP_LORA:     loraApp_Setup();     break;
+        case STATE_APP_BLE_UART: bleUartApp_Setup();  break;
     }
 }
 
@@ -85,5 +87,6 @@ void loop() {
         case STATE_SENSOR_CHART: sensorChart_Loop();  break;
         case STATE_APP_I2C:      i2cApp_Loop();       break;
         case STATE_APP_LORA:     loraApp_Loop();      break;
+        case STATE_APP_BLE_UART: bleUartApp_Loop();   break;
     }
 }

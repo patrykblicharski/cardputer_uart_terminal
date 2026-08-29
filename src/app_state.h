@@ -13,7 +13,8 @@ enum AppState {
     STATE_SENSOR_VIEW,
     STATE_SENSOR_CHART,
     STATE_APP_I2C,
-    STATE_APP_LORA
+    STATE_APP_LORA,
+    STATE_APP_BLE_UART
 };
 
 struct SensorSample {
