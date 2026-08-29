@@ -3,6 +3,9 @@
 #include "display/display_ext.h"
 #include "display/display_int.h"
 #include "config.h"
+#include "version.h"
+
+#include <cstdio>
 
 static constexpr unsigned long SPLASH_MS = 2000;
 static unsigned long s_start = 0;
@@ -20,12 +23,15 @@ void splash_Setup() {
 
     extDisplay.setTextSize(1);
     extDisplay.setTextColor(C_GRAY, TFT_BLACK);
-    const char* sub = "v2.0 -- Advanced diagnostics";
+    char sub[48];
+    snprintf(sub, sizeof(sub), "v%s -- Advanced diagnostics", FW_VERSION);
     tw = extDisplay.textWidth(sub);
     extDisplay.setCursor((EXT_W - tw) / 2, EXT_H / 2 + 10);
     extDisplay.print(sub);
 
-    intDisplay_ShowLabel("CARDPUTER UART TOOL v2");
+    char intLabel[40];
+    snprintf(intLabel, sizeof(intLabel), "CARDPUTER UART TOOL v%s", FW_VERSION);
+    intDisplay_ShowLabel(intLabel);
 }
 
 void splash_Loop() {
