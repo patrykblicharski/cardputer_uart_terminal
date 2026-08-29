@@ -1,0 +1,176 @@
+{
+    "version": "2.0.0",
+    "options": {
+        "cwd": "${workspaceFolder}"
+    },
+    "tasks": [
+        {
+            "label": "PIO: Build Cardputer",
+            "type": "process",
+            "command": "${env:USERPROFILE}\\.platformio\\penv\\Scripts\\pio.exe",
+            "args": ["run", "-e", "m5stack-cardputer"],
+            "icon": {
+                "id": "tools",
+                "color": "terminal.ansiGreen"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "PIO: Upload Cardputer",
+            "type": "process",
+            "command": "${env:USERPROFILE}\\.platformio\\penv\\Scripts\\pio.exe",
+            "args": ["run", "-e", "m5stack-cardputer", "-t", "upload"],
+            "icon": {
+                "id": "arrow-up",
+                "color": "terminal.ansiYellow"
+            },
+            "problemMatcher": ["$gcc"],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "PIO: Upload + Monitor Cardputer",
+            "type": "process",
+            "command": "${env:USERPROFILE}\\.platformio\\penv\\Scripts\\pio.exe",
+            "args": ["run", "-e", "m5stack-cardputer", "-t", "upload", "-t", "monitor"],
+            "icon": {
+                "id": "arrow-circle-up",
+                "color": "terminal.ansiCyan"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "focus": true
+            }
+        },
+        {
+            "label": "PIO: Monitor Cardputer",
+            "type": "process",
+            "command": "${env:USERPROFILE}\\.platformio\\penv\\Scripts\\pio.exe",
+            "args": ["device", "monitor", "-e", "m5stack-cardputer"],
+            "icon": {
+                "id": "plug",
+                "color": "terminal.ansiMagenta"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "focus": true
+            }
+        },
+        {
+            "label": "PIO: Build Keyboard Test",
+            "type": "process",
+            "command": "${env:USERPROFILE}\\.platformio\\penv\\Scripts\\pio.exe",
+            "args": ["run", "-e", "test-keyboard"],
+            "icon": {
+                "id": "keyboard"
+            },
+            "problemMatcher": ["$gcc"],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "PIO: Upload Keyboard Test",
+            "type": "process",
+            "command": "${env:USERPROFILE}\\.platformio\\penv\\Scripts\\pio.exe",
+            "args": ["run", "-e", "test-keyboard", "-t", "upload"],
+            "icon": {
+                "id": "keyboard"
+            },
+            "problemMatcher": ["$gcc"],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "PIO: Build SD Test",
+            "type": "process",
+            "command": "${env:USERPROFILE}\\.platformio\\penv\\Scripts\\pio.exe",
+            "args": ["run", "-e", "test-sd"],
+            "icon": {
+                "id": "database"
+            },
+            "problemMatcher": ["$gcc"],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "PIO: Upload SD Test",
+            "type": "process",
+            "command": "${env:USERPROFILE}\\.platformio\\penv\\Scripts\\pio.exe",
+            "args": ["run", "-e", "test-sd", "-t", "upload"],
+            "icon": {
+                "id": "database"
+            },
+            "problemMatcher": ["$gcc"],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "PIO: Build Wemos BLE UART",
+            "type": "process",
+            "command": "${env:USERPROFILE}\\.platformio\\penv\\Scripts\\pio.exe",
+            "args": ["run", "-d", "wemos_ble_uart", "-e", "wemos-d1-esp32"],
+            "icon": {
+                "id": "radio-tower",
+                "color": "terminal.ansiBlue"
+            },
+            "problemMatcher": ["$gcc"],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "PIO: Upload Wemos BLE UART",
+            "type": "process",
+            "command": "${env:USERPROFILE}\\.platformio\\penv\\Scripts\\pio.exe",
+            "args": ["run", "-d", "wemos_ble_uart", "-e", "wemos-d1-esp32", "-t", "upload"],
+            "icon": {
+                "id": "radio-tower",
+                "color": "terminal.ansiYellow"
+            },
+            "problemMatcher": ["$gcc"],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "PIO: Monitor Wemos BLE UART",
+            "type": "process",
+            "command": "${env:USERPROFILE}\\.platformio\\penv\\Scripts\\pio.exe",
+            "args": ["device", "monitor", "-d", "wemos_ble_uart", "-e", "wemos-d1-esp32"],
+            "icon": {
+                "id": "plug",
+                "color": "terminal.ansiBlue"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "focus": true
+            }
+        }
+    ]
+}

@@ -121,6 +121,22 @@ static void drawContent(AppState state) {
         helpRow("CTRL+=",          "Ta pomoc (zamknij)");
         break;
 
+    case STATE_APP_BLE_UART:
+        helpRow("FN+DEL",          "Menu glowne (rozlacz)");
+        helpRow("ENTER",           "Skanuj / Polacz");
+        helpRow(";  /  .",         "Nawigacja listy");
+        helpRow("FN+1",            "Filtr NUS / Rozlacz");
+        helpRow("FN+2",            "Rozlacz + rescan");
+        helpRow("FN+3",            "Echo lokalne wl/wyl");
+        helpRow("FN+4",            "Filtr ANSI wl/wyl");
+        helpRow("FN+5",            "Wyczysc terminal");
+        helpRow("FN+6",            "Tryb CRLF wl/wyl");
+        helpRow("FN+7",            "Czcionka 1x / 2x");
+        helpRow("FN+R",            "Ponow skan (lista)");
+        helpSep();
+        helpRow("CTRL+=",          "Ta pomoc (zamknij)");
+        break;
+
     default:
         helpRow("FN+DEL",          "Menu glowne");
         helpRow("CTRL+=",          "Ta pomoc (zamknij)");
@@ -152,6 +168,7 @@ void helpOverlay_Show(AppState state) {
         case STATE_SENSOR_CHART: title = "WYKRES";            break;
         case STATE_APP_I2C:      title = "I2C SCANNER";       break;
         case STATE_APP_LORA:     title = "LORA CHANNEL";      break;
+        case STATE_APP_BLE_UART: title = "BLE UART";          break;
         default:                 title = "OGOLNE";            break;
     }
     extDisplay.print("SKROTY  \xBB  ");

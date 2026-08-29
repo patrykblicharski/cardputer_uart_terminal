@@ -61,6 +61,7 @@ STATE_SENSOR_VIEW        │
 STATE_SENSOR_CHART       ┘
 STATE_APP_I2C            ← I2C scanner app
 STATE_APP_LORA           ← LoRa channel app
+STATE_APP_BLE_UART       ← BLE UART client (NUS scan/connect/terminal)
 ```
 
 ### Source file layout
@@ -90,6 +91,7 @@ src/
   apps/
     app_i2c.h/cpp            I2C scanner app (bit-bang soft probe, device DB, sensor detail)
     app_lora.h/cpp           LoRa channel app (Serial1 bridge to Heltec, protocol parser)
+    app_ble_uart.h/cpp       BLE UART client (NimBLE NUS scan/connect/terminal)
     i2c_db.h/cpp             50+ I2C device address database
     i2c_sensors.h/cpp        Sensor drivers: BMP280/BME280, MPU-6050, AHT20, SHT3x, BH1750, DHT12
 ```
@@ -157,6 +159,25 @@ src/
 | FN+6 | Cycle SF (7–12) |
 | FN+7 | Cycle frequency preset (433.1 / 433.5 / 434.0 MHz) |
 
+### FN shortcuts — BLE UART
+
+| Key | Action |
+|---|---|
+| FN+DEL | Disconnect and exit to main menu |
+| ENTER | Start scan / connect to selected device |
+| ; / . | Navigate scan results |
+| FN+1 | Idle: toggle All/NUS filter · Terminal: disconnect → results |
+| FN+2 | Disconnect and rescan |
+| FN+3 | Toggle local echo |
+| FN+4 | Toggle ANSI filter |
+| FN+5 | Clear terminal |
+| FN+6 | Toggle CRLF |
+| FN+7 | Toggle font 1×/2× |
+| FN+R | Rescan (from results list) |
+| DEL | Back (results → idle) |
+
+**BLE note:** Uses NimBLE-Arduino as a Nordic UART Service (NUS) client. Scan discovers advertisers (optionally NUS-only); connect subscribes to TX notify and writes RX. Compatible with common BLE UART peripherals (nRF52, ESP32 NUS servers, etc.).
+
 ### Important invariants
 
 - `LGFX_ILI9341` driver: SPI2_HOST, spi_3wire=true, rotation=7 — do not change without hardware test
@@ -166,7 +187,7 @@ src/
 - **SD card uses `SPIClass(HSPI)` (SPI3)** — do NOT use global `SPI` / `SPI.begin()` which maps to FSPI (SPI2) and conflicts with LGFX. See `device/device_config.cpp`.
 - `isChange()` is clear-on-read — global handler in `loop()` reads `keysState()` without calling `isChange()` to avoid consuming the flag before screen `_Loop()` handlers
 
-**Dependencies:** `m5stack/M5Cardputer`, `m5stack/M5GFX`, `m5stack/M5Unified`
+**Dependencies:** `m5stack/M5Cardputer`, `m5stack/M5GFX`, `m5stack/M5Unified`, `bblanchon/ArduinoJson`, `h2zero/NimBLE-Arduino`
 
 ---
 
