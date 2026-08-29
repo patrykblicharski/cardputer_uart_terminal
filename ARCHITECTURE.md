@@ -17,6 +17,7 @@ STATE_SPLASH
             │
             ├─> STATE_APP_I2C            ← skaner I2C
             └─> STATE_APP_LORA           ← kanał LoRa
+            └─> STATE_APP_BLE_UART       ← BLE UART (NUS)
 
 STATE_TERMINAL
     └─> STATE_MAINT_MENU
